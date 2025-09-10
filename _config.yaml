@@ -1,0 +1,60 @@
+# Site settings
+title: "Clearly Politics"
+description: "Data-driven analysis of gun violence and political violence patterns in the United States"
+url: "https://thementor1337.github.io"
+baseurl: "/clearly-politics"
+
+# Build settings
+markdown: kramdown
+highlighter: rouge
+permalink: pretty
+
+# GitHub Pages / Jekyll settings
+plugins:
+  - jekyll-feed
+  - jekyll-sitemap
+  - jekyll-seo-tag
+
+# Exclude from processing
+exclude:
+  - Gemfile
+  - Gemfile.lock
+  - node_modules
+  - vendor/bundle/
+  - vendor/cache/
+  - vendor/gems/
+  - vendor/ruby/
+  - scripts/
+  - .gitignore
+  - LICENSE
+  - README.md
+
+# Include files
+include:
+  - _pages
+  - assets
+
+# Custom variables
+author: "Clearly Politics Team"
+twitter_username: your_twitter
+github_username: your_github
+
+# Analytics (optional)
+google_analytics: UA-XXXXXXX-X
+
+# SEO settings
+social:
+  name: Clearly Politics
+  links:
+    - https://github.com/yourusername/clearly-politics
+
+# Site navigation
+navigation:
+  - title: Dashboard
+    url: /
+  - title: Methodology  
+    url: /methodology
+  - title: Data Sources
+    url: /sources
+  - title: About
+    url: /about
