@@ -16,12 +16,17 @@ class DataValidator {
         this.validationRules = {
             required_fields: [
                 'gunViolenceByPolitics',
-                'politicalViolenceBreakdown', 
-                'metadata'
+                'politicalViolenceBreakdown',
+                'metadata',
+                'gunViolenceSummary',
+                'monthlyTrends',
+                'massShootingsByPolitics'
             ],
             numeric_ranges: {
                 'gunViolenceByPolitics.red.rate': { min: 0, max: 1000 },
                 'gunViolenceByPolitics.blue.rate': { min: 0, max: 1000 },
+                'gunViolenceSummary.totalIncidents': { min: 0, max: 200000 },
+                'gunViolenceSummary.massShootings': { min: 0, max: 2000 },
                 'politicalViolenceBreakdown.rightWingExtremism': { min: 0, max: 10000 },
                 'politicalViolenceBreakdown.leftWingExtremism': { min: 0, max: 10000 }
             },
@@ -48,6 +53,7 @@ class DataValidator {
             this.validateRanges(data);
             this.validateFreshness(data);
             this.validateConsistency(data);
+            this.validateTotals(data);
             
             // Generate validation report
             this.generateReport();
@@ -115,13 +121,14 @@ class DataValidator {
         console.log('\n🔢 Validating data types...');
         
         const typeChecks = [
-            { path: 'gunViolenceByPolitics.red.incidents', type: 'number' },
-            { path: 'gunViolenceByPolitics.blue.incidents', type: 'number' },
+            { path: 'gunViolenceSummary.totalIncidents', type: 'number' },
             { path: 'gunViolenceByPolitics.red.rate', type: 'number' },
             { path: 'gunViolenceByPolitics.blue.rate', type: 'number' },
             { path: 'politicalViolenceBreakdown.rightWingExtremism', type: 'number' },
             { path: 'politicalViolenceBreakdown.leftWingExtremism', type: 'number' },
-            { path: 'metadata.processedAt', type: 'string' }
+            { path: 'metadata.processedAt', type: 'string' },
+            { path: 'metadata.year', type: 'number' },
+            { path: 'monthlyTrends.data', type: 'object' }, // Array is an object
         ];
         
         for (const check of typeChecks) {
@@ -203,6 +210,29 @@ class DataValidator {
             } else {
                 console.log(`✓ Political violence data consistent (${total} total incidents)`);
             }
+        }
+    }
+
+    validateTotals(data) {
+        console.log('\n🔢 Validating totals...');
+        const pvData = data.politicalViolenceBreakdown;
+        const pvBreakdownTotal = Object.values(pvData.breakdown).reduce((a, b) => a + b, 0);
+        const pvIdeologyTotal = pvData.rightWingExtremism + pvData.leftWingExtremism + pvData.islamistExtremism + pvData.otherIdeology;
+
+        if (pvBreakdownTotal !== pvIdeologyTotal) {
+            this.warnings.push(`Political violence breakdown total (${pvBreakdownTotal}) does not match ideology total (${pvIdeologyTotal})`);
+        } else {
+            console.log('✓ Political violence totals are consistent');
+        }
+
+        const msData = data.massShootingsByPolitics;
+        const msTotal = msData.red.massShootings + msData.blue.massShootings + msData.swing.massShootings;
+        const expectedMsTotal = data.gunViolenceSummary.massShootings;
+
+        if (Math.abs(msTotal - expectedMsTotal) > 2) { // Allow small difference for rounding
+            this.warnings.push(`Mass shooting breakdown total (${msTotal}) does not match summary total (${expectedMsTotal})`);
+        } else {
+            console.log('✓ Mass shooting totals are consistent');
         }
     }
 

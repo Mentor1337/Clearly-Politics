@@ -8,13 +8,14 @@ baseurl: "/clearly-politics"
 markdown: kramdown
 highlighter: rouge
 permalink: pretty
+remote_theme: pages-themes/tactile@v0.2.0
 
 # GitHub Pages / Jekyll settings
 plugins:
   - jekyll-feed
   - jekyll-sitemap
   - jekyll-seo-tag
-
+  - jekyll-remote-theme
 # Exclude from processing
 exclude:
   - Gemfile
@@ -35,9 +36,9 @@ include:
   - assets
 
 # Custom variables
-author: "Clearly Politics Team"
-twitter_username: your_twitter
-github_username: your_github
+author: "Mentor1337"
+twitter_username: Mentor1337
+github_username: Mentor1337
 
 # Analytics (optional)
 google_analytics: UA-XXXXXXX-X
@@ -46,7 +47,7 @@ google_analytics: UA-XXXXXXX-X
 social:
   name: Clearly Politics
   links:
-    - https://github.com/yourusername/clearly-politics
+    - https://github.com/Mentor1337/clearly-politics
 
 # Site navigation
 navigation:

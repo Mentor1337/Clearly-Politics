@@ -245,19 +245,19 @@
 		<div class="stats-grid">
 			<div class="stat-card">
 				<div class="stat-number" id="total-incidents">Loading...</div>
-				<div class="stat-label">Total Gun Violence Incidents (2024)</div>
+				<div class="stat-label">Total Gun Violence Incidents (<span class="dynamic-year"></span>)</div>
 			</div>
 			<div class="stat-card">
 				<div class="stat-number" id="mass-shootings">Loading...</div>
-				<div class="stat-label">Mass Shootings (2024)</div>
+				<div class="stat-label">Mass Shootings (<span class="dynamic-year"></span>)</div>
 			</div>
 			<div class="stat-card">
 				<div class="stat-number" id="political-violence">Loading...</div>
-				<div class="stat-label">Political Violence Incidents</div>
+				<div class="stat-label">Political Violence Incidents (<span class="dynamic-year"></span>)</div>
 			</div>
 			<div class="stat-card">
 				<div class="stat-number" id="deaths-total">Loading...</div>
-				<div class="stat-label">Gun Violence Deaths</div>
+				<div class="stat-label">Gun Violence Deaths (<span class="dynamic-year"></span>)</div>
 			</div>
 		</div>
 
@@ -295,7 +295,7 @@
 			<div class="chart-container">
 				<h3 class="chart-title">
 					<i class="fas fa-calendar-alt"></i>
-					Monthly Gun Violence Trends (2024)
+					Monthly Gun Violence Trends (<span class="dynamic-year"></span>)
 				</h3>
 				<div class="chart">
 					<canvas id="monthlyTrendChart"></canvas>
@@ -353,79 +353,90 @@
 	</div>
 
 	<script>
-		// Initialize charts and data loading
 		document.addEventListener('DOMContentLoaded', function () {
 			initializeDashboard();
 		});
 
 		async function initializeDashboard() {
 			try {
-				// Load data from various sources
-				await loadGunViolenceData();
-				await loadPoliticalViolenceData();
-				await loadStateData();
-
-				// Initialize all charts
-				initializeCharts();
+				showLoadingState(true);
+				
+				// Load historical GVA data
+				const historicalResponse = await fetch('data/processed/historical_gva_data.json');
+				const historicalData = await historicalResponse.json();
+				
+				// Load current data
+				const currentResponse = await fetch('/api/data');
+				const currentData = await currentResponse.json();
+				
+				// Combine historical and current data
+				const combinedData = {
+					...currentData,
+					historical: historicalData
+				};
+				
+				updateDashboard(combinedData);
+				showLoadingState(false);
 			} catch (error) {
 				console.error('Error initializing dashboard:', error);
+				showErrorState('Failed to load dashboard data. Please try again later.');
 			}
 		}
 
-		// Mock data for demonstration - replace with actual API calls
-		const mockData = {
-			gunViolence: {
-				totalIncidents: 48247,
-				massShootings: 693,
-				deaths: 15208,
-				redStates: { incidents: 28430, population: 150000000 },
-				blueStates: { incidents: 19817, population: 180000000 }
-			},
-			politicalViolence: {
-				rightWing: 315,
-				leftWing: 47,
-				other: 23
-			},
-			monthlyTrends: [
-				{ month: 'Jan', incidents: 3890 },
-				{ month: 'Feb', incidents: 3654 },
-				{ month: 'Mar', incidents: 4123 },
-				{ month: 'Apr', incidents: 4387 },
-				{ month: 'May', incidents: 4892 },
-				{ month: 'Jun', incidents: 5234 },
-				{ month: 'Jul', incidents: 5678 },
-				{ month: 'Aug', incidents: 5123 },
-				{ month: 'Sep', incidents: 4987 }
-			]
-		};
-
-		async function loadGunViolenceData() {
-			// Update statistics
-			document.getElementById('total-incidents').textContent = mockData.gunViolence.totalIncidents.toLocaleString();
-			document.getElementById('mass-shootings').textContent = mockData.gunViolence.massShootings.toLocaleString();
-			document.getElementById('deaths-total').textContent = mockData.gunViolence.deaths.toLocaleString();
+		function showLoadingState(isLoading) {
+			const statCards = document.querySelectorAll('.stat-number');
+			if (isLoading) {
+				statCards.forEach(card => card.textContent = 'Loading...');
+			}
 		}
 
-		async function loadPoliticalViolenceData() {
-			const total = mockData.politicalViolence.rightWing + mockData.politicalViolence.leftWing + mockData.politicalViolence.other;
-			document.getElementById('political-violence').textContent = total.toLocaleString();
+		function showErrorState(message) {
+			document.querySelectorAll('.stat-number').forEach(el => el.textContent = 'Error');
+			const header = document.querySelector('header');
+			const errorDiv = document.createElement('div');
+			errorDiv.style.color = 'red';
+			errorDiv.style.padding = '10px';
+			errorDiv.textContent = `Failed to load dashboard data: ${message}`;
+			header.appendChild(errorDiv);
 		}
 
-		async function loadStateData() {
-			// This would fetch actual state-by-state data
-			console.log('Loading state data...');
+		function updateDashboard(data) {
+			const year = data.metadata.year || new Date().getFullYear();
+			const lastUpdate = new Date(data.metadata.lastUpdated || Date.now());
+
+			document.querySelectorAll('.dynamic-year').forEach(el => {
+				el.textContent = `${year} (as of ${lastUpdate.toLocaleDateString()})`;
+			});
+
+			// Update stat cards
+			const gvSummary = data.gunViolenceSummary;
+			document.getElementById('total-incidents').textContent = gvSummary.totalIncidents?.toLocaleString() ?? 'N/A';
+			document.getElementById('mass-shootings').textContent = gvSummary.massShootings?.toLocaleString() ?? 'N/A';
+			document.getElementById('deaths-total').textContent = gvSummary.deaths?.toLocaleString() ?? 'N/A';
+
+			const pvBreakdown = data.politicalViolenceBreakdown;
+			const politicalViolenceTotal = pvBreakdown.rightWingExtremism + pvBreakdown.leftWingExtremism + pvBreakdown.islamistExtremism + pvBreakdown.otherIdeology;
+			document.getElementById('political-violence').textContent = politicalViolenceTotal?.toLocaleString() ?? 'N/A';
+
+			initializeCharts(data);
 		}
 
-		function initializeCharts() {
-			createStateChart();
-			createMassShootingChart();
-			createPoliticalViolenceChart();
-			createMonthlyTrendChart();
-			createCorrelationChart();
-			createExtremistChart();
+		function initializeCharts(data) {
+			// Destroy existing charts to prevent memory leaks on refresh
+			Chart.helpers.each(Chart.instances, (instance) => {
+				instance.destroy();
+			});
+
+			createStateChart(data.gunViolenceByPolitics);
+			createMassShootingChart(data.massShootingsByPolitics);
+			createPoliticalViolenceChart(data.politicalViolenceBreakdown);
+			createMonthlyTrendChart(data.monthlyTrends);
+			createCorrelationChart(data.gunLawCorrelation);
+			createExtremistChart(data.politicalViolenceBreakdown);
+			createHistoricalTrendChart(data.historical);
 		}
 
-		function createStateChart() {
+		function createStateChart(data) {
 			const ctx = document.getElementById('stateChart').getContext('2d');
 			new Chart(ctx, {
 				type: 'bar',
@@ -433,105 +444,87 @@
 					labels: ['Red States (Per Capita)', 'Blue States (Per Capita)'],
 					datasets: [{
 						label: 'Gun Violence Rate per 100,000',
-						data: [
-							(mockData.gunViolence.redStates.incidents / mockData.gunViolence.redStates.population * 100000),
-							(mockData.gunViolence.blueStates.incidents / mockData.gunViolence.blueStates.population * 100000)
-						],
+						data: [data.red.rate, data.blue.rate],
 						backgroundColor: ['#e74c3c', '#3498db'],
 						borderColor: ['#c0392b', '#2980b9'],
 						borderWidth: 2
 					}]
 				},
 				options: {
-					responsive: true,
-					maintainAspectRatio: false,
-					plugins: {
-						legend: {
-							display: false
-						}
-					},
+					responsive: true, maintainAspectRatio: false,
+					plugins: { legend: { display: false } },
 					scales: {
 						y: {
 							beginAtZero: true,
-							title: {
-								display: true,
-								text: 'Incidents per 100,000 residents'
-							}
+							title: { display: true, text: 'Incidents per 100,000 residents' }
 						}
 					}
 				}
 			});
 		}
 
-		function createMassShootingChart() {
+		function createMassShootingChart(data) {
 			const ctx = document.getElementById('massShootingChart').getContext('2d');
+			const total = data.red.massShootings + data.blue.massShootings + data.swing.massShootings;
+			if (total === 0) {
+				ctx.canvas.style.display = 'none'; // Hide chart if no data
+				return;
+			}
 			new Chart(ctx, {
 				type: 'doughnut',
 				data: {
 					labels: ['Red States', 'Blue States', 'Swing States'],
 					datasets: [{
-						data: [65, 28, 7], // Mock percentages
+						label: '# of Mass Shootings',
+						data: [data.red.massShootings, data.blue.massShootings, data.swing.massShootings],
 						backgroundColor: ['#e74c3c', '#3498db', '#9b59b6'],
 						borderWidth: 3,
 						borderColor: '#fff'
 					}]
 				},
 				options: {
-					responsive: true,
-					maintainAspectRatio: false,
-					plugins: {
-						legend: {
-							position: 'bottom'
-						}
-					}
+					responsive: true, maintainAspectRatio: false,
+					plugins: { legend: { position: 'bottom' } }
 				}
 			});
 		}
 
-		function createPoliticalViolenceChart() {
+		function createPoliticalViolenceChart(data) {
 			const ctx = document.getElementById('politicalViolenceChart').getContext('2d');
 			new Chart(ctx, {
-				type: 'horizontalBar',
+				type: 'bar',
 				data: {
-					labels: ['Right-Wing Extremism', 'Left-Wing Extremism', 'Other/Unknown'],
+					labels: ['Right-Wing Extremism', 'Left-Wing Extremism', 'Islamist Extremism', 'Other/Unknown'],
 					datasets: [{
-						data: [mockData.politicalViolence.rightWing, mockData.politicalViolence.leftWing, mockData.politicalViolence.other],
-						backgroundColor: ['#e74c3c', '#3498db', '#95a5a6'],
-						borderColor: ['#c0392b', '#2980b9', '#7f8c8d'],
+						data: [data.rightWingExtremism, data.leftWingExtremism, data.islamistExtremism, data.otherIdeology],
+						backgroundColor: ['#e74c3c', '#3498db', '#f39c12', '#95a5a6'],
+						borderColor: ['#c0392b', '#2980b9', '#e67e22', '#7f8c8d'],
 						borderWidth: 2
 					}]
 				},
 				options: {
-					responsive: true,
-					maintainAspectRatio: false,
+					responsive: true, maintainAspectRatio: false,
 					indexAxis: 'y',
-					plugins: {
-						legend: {
-							display: false
-						}
-					},
+					plugins: { legend: { display: false } },
 					scales: {
 						x: {
 							beginAtZero: true,
-							title: {
-								display: true,
-								text: 'Number of Incidents'
-							}
+							title: { display: true, text: 'Number of Incidents' }
 						}
 					}
 				}
 			});
 		}
 
-		function createMonthlyTrendChart() {
+		function createMonthlyTrendChart(data) {
 			const ctx = document.getElementById('monthlyTrendChart').getContext('2d');
 			new Chart(ctx, {
 				type: 'line',
 				data: {
-					labels: mockData.monthlyTrends.map(d => d.month),
+					labels: data.data.map(d => d.month),
 					datasets: [{
 						label: 'Gun Violence Incidents',
-						data: mockData.monthlyTrends.map(d => d.incidents),
+						data: data.data.map(d => d.incidents),
 						borderColor: '#e74c3c',
 						backgroundColor: 'rgba(231, 76, 60, 0.1)',
 						tension: 0.4,
@@ -569,7 +562,7 @@
 				data: {
 					datasets: [{
 						label: 'Gun Law Strength vs Gun Violence Rate',
-						data: scatterData,
+						data: data.map(d => ({ x: d.lawScore, y: d.violenceRate })),
 						backgroundColor: '#3498db',
 						borderColor: '#2980b9',
 						pointRadius: 8,
@@ -580,31 +573,22 @@
 					responsive: true,
 					maintainAspectRatio: false,
 					scales: {
-						x: {
-							title: {
-								display: true,
-								text: 'Gun Law Strength Score (0-100)'
-							}
-						},
-						y: {
-							title: {
-								display: true,
-								text: 'Gun Violence Rate (per 100k)'
-							}
-						}
+						x: { title: { display: true, text: 'Gun Law Strength Score (0-100)' } },
+						y: { title: { display: true, text: 'Gun Violence Rate (per 100k)' } }
 					}
 				}
 			});
 		}
 
-		function createExtremistChart() {
+		function createExtremistChart(data) {
 			const ctx = document.getElementById('extremistChart').getContext('2d');
+			const labels = Object.keys(data.breakdown).map(key => key.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase()));
 			new Chart(ctx, {
 				type: 'polarArea',
 				data: {
-					labels: ['White Supremacist', 'Anti-Government', 'Islamist', 'Left-Wing', 'Other'],
+					labels: labels,
 					datasets: [{
-						data: [187, 89, 34, 23, 52],
+						data: Object.values(data.breakdown),
 						backgroundColor: [
 							'#e74c3c',
 							'#f39c12',
@@ -617,25 +601,44 @@
 					}]
 				},
 				options: {
+					responsive: true, maintainAspectRatio: false,
+					plugins: { legend: { position: 'bottom' } }
+				}
+			});
+		}
+
+		function createHistoricalTrendChart(data) {
+			const ctx = document.getElementById('historicalTrendChart').getContext('2d');
+			new Chart(ctx, {
+				type: 'line',
+				data: {
+					labels: data.map(d => d.year),
+					datasets: [{
+						label: 'Gun Violence Incidents (Historical)',
+						data: data.map(d => d.totalIncidents),
+						borderColor: '#e74c3c',
+						backgroundColor: 'rgba(231, 76, 60, 0.1)',
+						tension: 0.4,
+						fill: true,
+						pointRadius: 5,
+						pointHoverRadius: 8
+					}]
+				},
+				options: {
 					responsive: true,
 					maintainAspectRatio: false,
-					plugins: {
-						legend: {
-							position: 'bottom'
+					scales: {
+						y: {
+							beginAtZero: false,
+							title: {
+								display: true,
+								text: 'Number of Incidents'
+							}
 						}
 					}
 				}
 			});
 		}
-
-		// Add data refresh functionality
-		function refreshData() {
-			console.log('Refreshing data...');
-			// Implement actual API calls here
-		}
-
-		// Auto-refresh every 30 minutes
-		setInterval(refreshData, 30 * 60 * 1000);
 	</script>
 </body>
 

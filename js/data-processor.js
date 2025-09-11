@@ -355,6 +355,141 @@ class DataProcessor {
             version: '1.0'
         };
     }
+
+    /**
+     * Process GVA data
+     */
+    async processGVAData(csvData) {
+        const incidents = csvData.split('\n')
+            .slice(1) // Skip header row
+            .filter(line => line.trim())
+            .map(line => {
+                const [
+                    id, date, _, timestamp, state, city, address, venue,
+                    lat, lon, killed, injured, numKilled, numInjured,
+                    numChildrenKilled, numTeensKilled, numChildrenInjured,
+                    characteristics, sources, incidentDate, year
+                ] = this.parseCSVLine(line);
+
+                return {
+                    id,
+                    date: new Date(incidentDate),
+                    state,
+                    city,
+                    address,
+                    venue: venue === 'N/A' ? null : venue,
+                    location: {
+                        lat: parseFloat(lat),
+                        lon: parseFloat(lon)
+                    },
+                    casualties: {
+                        killed: parseInt(numKilled) || 0,
+                        injured: parseInt(numInjured) || 0,
+                        childrenKilled: parseInt(numChildrenKilled) || 0,
+                        teensKilled: parseInt(numTeensKilled) || 0,
+                        childrenInjured: parseInt(numChildrenInjured) || 0
+                    },
+                    characteristics: characteristics.split(',').map(c => c.trim()),
+                    sources: this.parseSources(sources),
+                    year: parseInt(year)
+                };
+            });
+
+        // Process incidents into useful statistics
+        const stats = {
+            total: incidents.length,
+            byState: {},
+            byYear: {},
+            byCharacteristic: {},
+            totalCasualties: {
+                killed: 0,
+                injured: 0,
+                childrenKilled: 0,
+                teensKilled: 0,
+                childrenInjured: 0
+            }
+        };
+
+        // Calculate statistics
+        incidents.forEach(incident => {
+            // State stats
+            if (!stats.byState[incident.state]) {
+                stats.byState[incident.state] = {
+                    incidents: 0,
+                    killed: 0,
+                    injured: 0
+                };
+            }
+            stats.byState[incident.state].incidents++;
+            stats.byState[incident.state].killed += incident.casualties.killed;
+            stats.byState[incident.state].injured += incident.casualties.injured;
+
+            // Year stats
+            if (!stats.byYear[incident.year]) {
+                stats.byYear[incident.year] = {
+                    incidents: 0,
+                    killed: 0,
+                    injured: 0
+                };
+            }
+            stats.byYear[incident.year].incidents++;
+            stats.byYear[incident.year].killed += incident.casualties.killed;
+            stats.byYear[incident.year].injured += incident.casualties.injured;
+
+            // Characteristics stats
+            incident.characteristics.forEach(char => {
+                if (!stats.byCharacteristic[char]) {
+                    stats.byCharacteristic[char] = 0;
+                }
+                stats.byCharacteristic[char]++;
+            });
+
+            // Total casualties
+            stats.totalCasualties.killed += incident.casualties.killed;
+            stats.totalCasualties.injured += incident.casualties.injured;
+            stats.totalCasualties.childrenKilled += incident.casualties.childrenKilled;
+            stats.totalCasualties.teensKilled += incident.casualties.teensKilled;
+            stats.totalCasualties.childrenInjured += incident.casualties.childrenInjured;
+        });
+
+        return {
+            incidents,
+            statistics: stats,
+            lastUpdated: new Date().toISOString(),
+            source: 'Gun Violence Archive Historical Data'
+        };
+    }
+
+    parseCSVLine(line) {
+        const values = [];
+        let current = '';
+        let inQuotes = false;
+        
+        for (let i = 0; i < line.length; i++) {
+            const char = line[i];
+            
+            if (char === '"') {
+                inQuotes = !inQuotes;
+            } else if (char === ',' && !inQuotes) {
+                values.push(current.replace(/^"|"$/g, ''));
+                current = '';
+            } else {
+                current += char;
+            }
+        }
+        values.push(current.replace(/^"|"$/g, ''));
+        
+        return values;
+    }
+
+    parseSources(sources) {
+        if (!sources) return [];
+        return sources
+            .replace(/^c\("/, '')
+            .replace(/"\)$/, '')
+            .split('", "')
+            .filter(url => url && url !== 'N/A');
+    }
 }
 
 // Export for use in other modules

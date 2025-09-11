@@ -10,11 +10,12 @@ class APIHandlers {
             fbiUCR: 'https://api.fbi.gov/wanted/v1',
             johnHopkins: 'https://publichealth.jhu.edu/api', // Note: May need proxy
             protectDemocracy: 'https://protectdemocracy.org/api', // Note: May need proxy  
-            csis: 'https://www.csis.org/api' // Note: May need proxy
+            csis: 'https://www.csis.org/api', // Note: May need proxy
+            census: 'https://api.census.gov/data'
         };
         
         this.cache = new Map();
-        this.cacheExpiry = 30 * 60 * 1000; // 30 minutes
+        this.cacheExpiry = 15 * 60 * 1000; // 15 minutes - reduced for more frequent updates
     }
 
     /**
@@ -165,8 +166,11 @@ class APIHandlers {
      */
     async fetchCensusData() {
         try {
-            // Using Census Bureau API
-            const url = 'https://api.census.gov/data/2023/pep/population?get=POP_2023,NAME&for=state:*';
+            const currentYear = new Date().getFullYear();
+            const censusApiKey = process.env.CENSUS_API_KEY;
+            
+            // Using Census Bureau API with API key
+            const url = `${this.baseUrls.census}/${currentYear}/pep/population?get=POP_${currentYear},NAME&for=state:*&key=${censusApiKey}`;
             
             return await this.fetchWithCache('census_population', url);
         } catch (error) {
