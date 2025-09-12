@@ -1,3 +1,4 @@
+require('../scripts/polyfills');
 const NewsAPI = require('newsapi');
 const axios = require('axios');
 

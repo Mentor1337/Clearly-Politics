@@ -5,6 +5,9 @@
  * Fetches and processes data from various APIs and sources
  */
 
+// Load polyfills first
+require('./polyfills');
+
 const fs = require('fs').promises;
 const path = require('path');
 const https = require('https');
