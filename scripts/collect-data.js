@@ -73,8 +73,13 @@ class DataCollector {
         };
 
         // Initialize services
-        const NewsService = require('../js/news-api');
-        const newsService = new NewsService(process.env.NEWS_API_KEY);
+        const MultiNewsService = require('../js/multi-news-service');
+        const newsService = new MultiNewsService({
+            MEDIASTACK_API_KEY: process.env.MEDIASTACK_API_KEY,
+            GNEWS_API_KEY: process.env.GNEWS_API_KEY,
+            NEWSDATA_API_KEY: process.env.NEWSDATA_API_KEY,
+            NYT_API_KEY: process.env.NYT_API_KEY
+        });
 
         try {
             // Census data (population)
