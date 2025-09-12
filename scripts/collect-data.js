@@ -667,9 +667,9 @@ class DataCollector {
     }
 
     async analyzeIncidents(incidents) {
-        const openai = new OpenAI({
-            apiKey: process.env.OPENAI_API_KEY
-        });
+        // Initialize Claude service
+        const ClaudeService = require('../js/claude-service');
+        const claude = new ClaudeService(process.env.CLAUDE_API_KEY);
 
         console.log('🤖 Analyzing incidents for political motivation...');
 
@@ -685,24 +685,14 @@ class DataCollector {
                     analyzedIncidents.push(incident);
                     continue;
                 }
+                const claude = new ClaudeService(process.env.CLAUDE_API_KEY);
 
                 // Analyze articles for political motivation
-                const analysis = await openai.chat.completions.create({
-                    model: "gpt-4-turbo",
-                    messages: [
-                        {
-                            role: "system",
-                            content: "Analyze the following news articles about a shooting incident and determine if there's any political or extremist motivation. Classify as: right-wing-extremism, left-wing-extremism, islamist-extremism, other-extremism, or non-political. Provide confidence score 0-1."
-                        },
-                        {
-                            role: "user",
-                            content: JSON.stringify(newsArticles)
-                        }
-                    ]
-                });
-
-                const result = JSON.parse(analysis.choices[0].message.content);
-                incident.analysis = result;
+                const analysis = await claude.batchAnalyzeArticles(newsArticles);
+                incident.analysis = {
+                    type: analysis.classification,
+                    confidence: analysis.confidence
+                };
                 analyzedIncidents.push(incident);
 
             } catch (error) {

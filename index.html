@@ -360,21 +360,21 @@
 		async function initializeDashboard() {
 			try {
 				showLoadingState(true);
-				
+
 				// Load historical GVA data
 				const historicalResponse = await fetch('data/processed/historical_gva_data.json');
 				const historicalData = await historicalResponse.json();
-				
+
 				// Load current data
 				const currentResponse = await fetch('/api/data');
 				const currentData = await currentResponse.json();
-				
+
 				// Combine historical and current data
 				const combinedData = {
 					...currentData,
 					historical: historicalData
 				};
-				
+
 				updateDashboard(combinedData);
 				showLoadingState(false);
 			} catch (error) {

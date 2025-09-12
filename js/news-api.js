@@ -44,28 +44,15 @@ class NewsService {
         ).join('\n\n');
 
         try {
-            const analysis = await axios.post('https://api.openai.com/v1/chat/completions', {
-                model: "gpt-4-turbo",
-                messages: [
-                    {
-                        role: "system",
-                        content: "Analyze the following news articles about a shooting incident and classify any political or extremist motivation."
-                    },
-                    {
-                        role: "user",
-                        content: combinedText
-                    }
-                ]
-            }, {
-                headers: {
-                    'Authorization': `Bearer ${process.env.OPENAI_API_KEY}`,
-                    'Content-Type': 'application/json'
-                }
-            });
+            const ClaudeService = require('./claude-service');
+            const claude = new ClaudeService(process.env.CLAUDE_API_KEY);
+
+            // Analyze articles for political motivation
+            const analysis = await claude.analyzeArticles(articles);
 
             return {
-                type: analysis.data.choices[0].message.content,
-                confidence: 0.8 // Example confidence score
+                type: analysis.classification,
+                confidence: analysis.confidence
             };
         } catch (error) {
             console.error('Error analyzing political motivation:', error);
