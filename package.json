@@ -10,12 +10,11 @@
     "test": "npm run validate && echo 'All tests passed'",
     "build": "npm run collect && echo 'Build completed'",
     "deploy": "gh-pages -d .",
-    "dev": "npm run serve",
-    "watch-data": "nodemon --exec 'npm run collect' --watch scripts/collect-data.js --interval 900000"
+    "dev": "npm run serve"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Mentor1337/clearly-politics.git"
+    "url": "git+https://github.com/yourusername/clearly-politics.git"
   },
   "keywords": [
     "gun-violence",
@@ -29,17 +28,13 @@
   "author": "Clearly Politics Team",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/Mentor1337/clearly-politics/issues"
+    "url": "https://github.com/yourusername/clearly-politics/issues"
   },
-  "homepage": "https://Mentor1337.github.io/clearly-politics/",
+  "homepage": "https://yourusername.github.io/clearly-politics/",
   "dependencies": {
-    "axios": "^1.11.0",
-    "cheerio": "^1.1.2",
-    "dotenv": "^17.2.2",
-    "fs": "^0.0.1-security",
-    "newsapi": "^2.4.1",
-    "node-cron": "^3.0.2",
-    "path": "^0.12.7"
+    "axios": "^1.12.0",
+    "cheerio": "^1.0.0-rc.12",
+    "node-cron": "^3.0.2"
   },
   "devDependencies": {
     "gh-pages": "^6.0.0",
