@@ -15,15 +15,22 @@ on:
       - 'scripts/**'
       - '.github/workflows/**'
 
+# Add explicit permissions
+permissions:
+  contents: write  # Required for pushing commits
+  pages: write    # Required for GitHub Pages deployment
+  id-token: write # Required for GitHub Pages authentication
+
 jobs:
   collect-and-deploy:
     runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
     
     steps:
     - name: Checkout repository
       uses: actions/checkout@v4
-      with:
-        token: ${{ secrets.GITHUB_TOKEN }}
     
     - name: Setup Node.js
       uses: actions/setup-node@v4
@@ -111,13 +118,20 @@ jobs:
           echo "Data updated and pushed"
         fi
     
+    - name: Setup Pages
+      if: github.ref == 'refs/heads/main'
+      uses: actions/configure-pages@v4
+
+    - name: Upload artifact
+      if: github.ref == 'refs/heads/main'
+      uses: actions/upload-pages-artifact@v3
+      with:
+        path: '.'
+        
     - name: Deploy to GitHub Pages
       if: github.ref == 'refs/heads/main'
-      uses: peaceiris/actions-gh-pages@v4
-      with:
-        github_token: ${{ secrets.GITHUB_TOKEN }}
-        publish_dir: ./
-        exclude_assets: 'scripts/,data/raw/,.github/'
+      id: deployment
+      uses: actions/deploy-pages@v4
     
     - name: Create release on major updates
       if: github.event_name == 'schedule' && github.ref == 'refs/heads/main'
@@ -140,9 +154,9 @@ jobs:
       run: |
         # Log some basic metrics about the update
         echo "Workflow Performance Metrics:"
-        echo "- Start time: ${{ github.event.created_at }}"
+        echo "- Run ID: ${{ github.run_id }}"
         echo "- Data files size: $(du -sh data/ 2>/dev/null | cut -f1 || echo 'unknown')"
-        echo "- Processing time: $(($(date +%s) - $(date -d '${{ github.event.created_at }}' +%s 2>/dev/null || date +%s))) seconds"
+        echo "- Timestamp: $(date -u +'%Y-%m-%d %H:%M UTC')"
 
   # Separate job for data validation and quality checks
   data-quality-check:
