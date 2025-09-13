@@ -139,7 +139,7 @@ class DataCollector {
 
     async collectCensusData() {
         try {
-            const url = 'https://api.census.gov/data/2023/pep/population?get=POP_2023,NAME&for=state:*';
+            const url = 'https://api.census.gov/data/2023/pep/population?get=NAME,POP&for=state:*';
             const data = await this.fetchJSON(url);
             
             const statePopulations = {};
@@ -762,6 +762,14 @@ class DataCollector {
         } catch (error) {
             console.error('❌ Error in data collection:', error.message);
         }
+    }
+
+    getEstimatedIncidents() {
+        // Conservative estimate based on historical data
+        const currentDate = new Date();
+        const startOfYear = new Date(currentDate.getFullYear(), 0, 1);
+        const yearProgress = (currentDate - startOfYear) / (365 * 24 * 60 * 60 * 1000);
+        return Math.round(50000 * yearProgress);
     }
 }
 

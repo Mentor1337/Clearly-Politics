@@ -365,11 +365,11 @@
 				const historicalResponse = await fetch('data/processed/historical_gva_data.json');
 				const historicalData = await historicalResponse.json();
 
-                                // Load current processed data written by the collector
-                                const currentResponse = await fetch('data/processed/latest.json', { cache: 'no-store' });
-                                const currentData = await currentResponse.json();
+				// Load current processed data written by the collector
+				const currentResponse = await fetch('data/processed/latest.json', { cache: 'no-store' });
+				const currentData = await currentResponse.json();
 
-                                const combinedData = { ...currentData, historical: historicalData };
+				const combinedData = { ...currentData, historical: historicalData };
 
 				updateDashboard(combinedData);
 				showLoadingState(false);
@@ -545,19 +545,18 @@
 			});
 		}
 
-		function createCorrelationChart() {
+		function createCorrelationChart(data) {
 			const ctx = document.getElementById('correlationChart').getContext('2d');
-			// Mock data showing inverse correlation between gun law strength and gun violence
-			const scatterData = [
-				{ x: 10, y: 45 }, { x: 25, y: 38 }, { x: 35, y: 32 }, { x: 40, y: 28 },
-				{ x: 55, y: 22 }, { x: 65, y: 18 }, { x: 75, y: 15 }, { x: 85, y: 12 }
-			];
-
 			new Chart(ctx, {
 				type: 'scatter',
 				data: {
 					datasets: [{
 						label: 'Gun Law Strength vs Gun Violence Rate',
+						data: data.map(d => ({ x: d.lawScore, y: d.violenceRate })),
+						backgroundColor: 'rgba(231, 76, 60, 0.5)',
+						borderColor: '#e74c3c',
+						pointRadius: 8,
+						pointHoverRadius: 12,
 						data: data.map(d => ({ x: d.lawScore, y: d.violenceRate })),
 						backgroundColor: '#3498db',
 						borderColor: '#2980b9',
