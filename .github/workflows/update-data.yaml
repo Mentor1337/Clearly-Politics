@@ -37,7 +37,7 @@ jobs:
           npm ci
         else
           npm init -y
-          npm install axios cheerio
+          npm install axios@^1.12.0 cheerio
         fi
     
     - name: Create data directories
@@ -57,7 +57,7 @@ jobs:
       run: |
         # Check if data files were created
         if [ ! -f "data/processed/latest.json" ]; then
-          echo "❌ Data collection failed - latest.json not found"
+          echo "Data collection failed - latest.json not found"
           exit 1
         fi
         
@@ -66,10 +66,10 @@ jobs:
           const fs = require('fs');
           try {
             const data = JSON.parse(fs.readFileSync('data/processed/latest.json', 'utf8'));
-            console.log('✅ Data validation successful');
-            console.log('📊 Records processed:', Object.keys(data).length);
+            console.log('Data validation successful');
+            console.log('Records processed:', Object.keys(data).length);
           } catch (error) {
-            console.error('❌ Invalid JSON data:', error);
+            console.error('Invalid JSON data:', error);
             process.exit(1);
           }
         "
@@ -77,7 +77,8 @@ jobs:
     - name: Update timestamp in index.html
       run: |
         # Update last updated timestamp in the main dashboard
-        sed -i "s/Last updated: [^<]*/Last updated: $(date -u +'%Y-%m-%d %H:%M UTC')/" index.html
+        TIMESTAMP=$(date -u +'%Y-%m-%d %H:%M UTC')
+        sed -i "s/Last updated: [^<]*/Last updated: ${TIMESTAMP}/" index.html || echo "Timestamp update skipped - no target found"
     
     - name: Generate data summary
       run: |
@@ -91,31 +92,30 @@ jobs:
             lastUpdate: data.metadata?.processedAt || 'unknown'
           };
           fs.writeFileSync('data/update-summary.json', JSON.stringify(summary, null, 2));
-          console.log('📋 Data summary generated');
+          console.log('Data summary generated');
         "
     
-      - name: Commit and push changes
-        env:
-          GITHUB_TOKEN: ${{ secrets.GHUB_TOKEN }}
-        run: |
-          git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git config --local user.name "github-actions[bot]"
-          git remote set-url origin https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git
-          git remote set-url origin https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git
-          git add data/ index.html        # Only commit if there are changes
+    - name: Commit and push changes
+      run: |
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
+        git add data/ index.html
+        
+        # Only commit if there are changes
         if git diff --staged --quiet; then
-          echo "ℹ️ No data changes detected"
+          echo "No data changes detected"
         else
-          git commit -m "📊 Automated data update - $(date -u +'%Y-%m-%d %H:%M UTC')"
+          COMMIT_MESSAGE="Automated data update - $(date -u +'%Y-%m-%d %H:%M UTC')"
+          git commit -m "${COMMIT_MESSAGE}"
           git push
-          echo "✅ Data updated and pushed"
+          echo "Data updated and pushed"
         fi
     
     - name: Deploy to GitHub Pages
       if: github.ref == 'refs/heads/main'
       uses: peaceiris/actions-gh-pages@v4
       with:
-        github_token: ${{ secrets.GHUB_TOKEN }}
+        github_token: ${{ secrets.GITHUB_TOKEN }}
         publish_dir: ./
         exclude_assets: 'scripts/,data/raw/,.github/'
     
@@ -127,22 +127,22 @@ jobs:
         if ! git tag -l | grep -q "$WEEK"; then
           git tag -a "data-$WEEK" -m "Weekly data snapshot for week $WEEK"
           git push origin "data-$WEEK"
-          echo "🏷️ Created weekly data tag: data-$WEEK"
+          echo "Created weekly data tag: data-$WEEK"
         fi
     
     - name: Notify on failure
       if: failure()
       run: |
-        echo "❌ Workflow failed. Check the logs for details."
+        echo "Workflow failed. Check the logs for details."
         # Here you could add Slack/Discord/email notifications
     
     - name: Performance metrics
       run: |
         # Log some basic metrics about the update
-        echo "📈 Workflow Performance Metrics:"
+        echo "Workflow Performance Metrics:"
         echo "- Start time: ${{ github.event.created_at }}"
-        echo "- Data files size: $(du -sh data/ | cut -f1)"
-        echo "- Processing time: $(($(date +%s) - $(date -d '${{ github.event.created_at }}' +%s))) seconds"
+        echo "- Data files size: $(du -sh data/ 2>/dev/null | cut -f1 || echo 'unknown')"
+        echo "- Processing time: $(($(date +%s) - $(date -d '${{ github.event.created_at }}' +%s 2>/dev/null || date +%s))) seconds"
 
   # Separate job for data validation and quality checks
   data-quality-check:
@@ -198,15 +198,15 @@ jobs:
             }
             
             if (issues.length > 0) {
-              console.error('❌ Data quality issues found:');
+              console.error('Data quality issues found:');
               issues.forEach(issue => console.error('  -', issue));
               process.exit(1);
             } else {
-              console.log('✅ Data quality checks passed');
+              console.log('Data quality checks passed');
             }
             
           } catch (error) {
-            console.error('❌ Data quality check failed:', error);
+            console.error('Data quality check failed:', error);
             process.exit(1);
           }
         "
@@ -222,7 +222,7 @@ jobs:
     - name: Scan for sensitive data
       run: |
         # Check for API keys, tokens, or other sensitive data
-        echo "🔍 Scanning for sensitive data..."
+        echo "Scanning for sensitive data..."
         
         PATTERNS=(
           "api[_-]?key\s*=\s*['\"][^'\"]+['\"]"
@@ -232,9 +232,9 @@ jobs:
         )
         
         for pattern in "${PATTERNS[@]}"; do
-          if grep -r -i -E "$pattern" . --exclude-dir=.git --exclude-dir=node_modules; then
-            echo "⚠️ Potential sensitive data found with pattern: $pattern"
+          if grep -r -i -E "$pattern" . --exclude-dir=.git --exclude-dir=node_modules 2>/dev/null; then
+            echo "Potential sensitive data found with pattern: $pattern"
           fi
         done
         
-        echo "✅ Security scan completed"
+        echo "Security scan completed"
