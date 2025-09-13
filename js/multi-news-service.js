@@ -11,28 +11,33 @@ class MultiNewsService {
         };
     }
 
-    async getArticles(searchQuery) {
-        // Try each API in order until we get results
+    async search({ q, language = 'en', limitPerSource = 5 } = {}) {
+        const searchQuery = q || '';
         const apis = [
             this.tryMediastack.bind(this),
             this.tryGNews.bind(this),
             this.tryNewsdata.bind(this),
             this.tryNYT.bind(this)
         ];
+        const results = [];
 
         for (const api of apis) {
             try {
                 const articles = await api(searchQuery);
                 if (articles && articles.length > 0) {
-                    return articles;
+                    results.push(...articles.slice(0, limitPerSource));
                 }
             } catch (error) {
                 console.warn(`API attempt failed: ${error.message}`);
-                continue; // Try next API
             }
         }
 
-        return []; // Return empty array if all APIs fail
+        return results;
+    }
+
+    // Backwards compatibility
+    async getArticles(searchQuery) {
+        return this.search({ q: searchQuery });
     }
 
     async tryMediastack(searchQuery) {

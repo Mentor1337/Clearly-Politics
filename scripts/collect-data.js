@@ -10,7 +10,6 @@ require('./polyfills');
 
 const fs = require('fs').promises;
 const path = require('path');
-const https = require('https');
 const axios = require('axios');
 const cheerio = require('cheerio');
 
@@ -74,7 +73,7 @@ class DataCollector {
 
         // Initialize services
         const MultiNewsService = require('../js/multi-news-service');
-        const newsService = new MultiNewsService({
+        this.news = new MultiNewsService({
             MEDIASTACK_API_KEY: process.env.MEDIASTACK_API_KEY,
             GNEWS_API_KEY: process.env.GNEWS_API_KEY,
             NEWSDATA_API_KEY: process.env.NEWSDATA_API_KEY,
@@ -387,20 +386,21 @@ class DataCollector {
             collectedAt: new Date().toISOString()
         };
     }
-    async fetchJSON(url, options = {}) {
-        return new Promise((resolve, reject) => {
-            https.get(url, options, (res) => {
-                let data = '';
-                res.on('data', chunk => data += chunk);
-                res.on('end', () => {
-                    try {
-                        resolve(JSON.parse(data));
-                    } catch (error) {
-                        reject(error);
-                    }
-                });
-            }).on('error', reject);
+    async fetchJSON(url) {
+        const resp = await axios.get(url, {
+            timeout: 15000,
+            maxRedirects: 5,
+            headers: {
+                'Accept': 'application/json',
+                'User-Agent': 'Clearly-Politics/1.0 (+github pages)'
+            },
+            validateStatus: s => s >= 200 && s < 300
         });
+        const ctype = String(resp.headers['content-type'] || '').toLowerCase();
+        if (!ctype.includes('application/json')) {
+            throw new Error(`Expected JSON, got content-type=${ctype}`);
+        }
+        return resp.data;
     }
 
     async saveRawData(data) {
@@ -715,16 +715,13 @@ class DataCollector {
 
     async fetchNewsArticles(searchQuery) {
         try {
-            // Use NewsAPI or similar service to fetch relevant articles
-            const newsapi = new NewsAPI(process.env.NEWS_API_KEY);
-            const response = await newsapi.v2.everything({
+            const articles = await this.news.search({
                 q: searchQuery,
+                from: new Date(Date.now() - 1000 * 60 * 60 * 24 * 21).toISOString(),
                 language: 'en',
-                sortBy: 'relevancy',
-                pageSize: 5
+                limitPerSource: 5
             });
-
-            return response.articles;
+            return articles;
         } catch (error) {
             console.error('Error fetching news articles:', error);
             return [];
