@@ -1,59 +1,19 @@
 {
   "metadata": {
-    "processedAt": "2025-09-13T23:42:19.977Z",
+    "processedAt": "2025-09-13T23:54:10.932Z",
     "version": "1.1",
     "year": 2025
   },
   "gunViolenceSummary": {
-    "totalIncidents": 34718,
-    "massShootings": 498,
-    "deaths": 10943,
-    "injuries": 23774,
-    "stateBreakdown": [
-      {
-        "state": "TX",
-        "incidents": 3046
-      },
-      {
-        "state": "CA",
-        "incidents": 2800
-      },
-      {
-        "state": "FL",
-        "incidents": 2486
-      },
-      {
-        "state": "IL",
-        "incidents": 2047
-      },
-      {
-        "state": "PA",
-        "incidents": 1767
-      },
-      {
-        "state": "OH",
-        "incidents": 1607
-      },
-      {
-        "state": "GA",
-        "incidents": 1535
-      },
-      {
-        "state": "NC",
-        "incidents": 1429
-      },
-      {
-        "state": "MI",
-        "incidents": 1349
-      },
-      {
-        "state": "AZ",
-        "incidents": 1270
-      }
-    ],
-    "lastUpdated": "2025-09-13T23:42:19.879Z",
-    "source": "Gun Violence Archive (Estimated)",
-    "methodology": "Estimated based on historical trends"
+    "totalIncidents": 35068,
+    "massShootings": 0,
+    "deaths": 0,
+    "injuries": 0,
+    "stateBreakdown": [],
+    "lastUpdated": "2025-09-13T23:54:10.770Z",
+    "source": "Gun Violence Archive (Live Data)",
+    "methodology": "Real-time data from GVA website scraping",
+    "year": 2025
   },
   "politicalViolenceBreakdown": {
     "rightWingExtremism": 315,
@@ -76,143 +36,92 @@
     ],
     "timeframe": "2025-01-01 to present",
     "methodology": "Incidents classified by perpetrator ideology based on manifesto, social media, and law enforcement reports",
-    "collectedAt": "2025-09-13T23:42:19.879Z"
+    "collectedAt": "2025-09-13T23:54:10.771Z"
   },
   "monthlyTrends": {
     "data": [
       {
         "month": "Jan",
         "year": 2025,
-        "incidents": 3571
+        "incidents": 3650
       },
       {
         "month": "Feb",
         "year": 2025,
-        "incidents": 3725
+        "incidents": 3612
       },
       {
         "month": "Mar",
         "year": 2025,
-        "incidents": 3747
+        "incidents": 4031
       },
       {
         "month": "Apr",
         "year": 2025,
-        "incidents": 3768
+        "incidents": 3951
       },
       {
         "month": "May",
         "year": 2025,
-        "incidents": 4070
+        "incidents": 4004
       },
       {
         "month": "Jun",
         "year": 2025,
-        "incidents": 3887
+        "incidents": 3877
       },
       {
         "month": "Jul",
         "year": 2025,
-        "incidents": 3374
+        "incidents": 3536
       },
       {
         "month": "Aug",
         "year": 2025,
-        "incidents": 3384
+        "incidents": 3294
       },
       {
         "month": "Sep",
         "year": 2025,
-        "incidents": 3038
+        "incidents": 3245
       }
     ],
     "source": "Mock Data (placeholder for time-series scraping)",
-    "collectedAt": "2025-09-13T23:42:19.880Z"
+    "collectedAt": "2025-09-13T23:54:10.771Z"
   },
   "gunViolenceByPolitics": {
     "red": {
-      "incidents": 7139,
-      "population": 64899962,
-      "rate": 11.000006440681737
+      "incidents": 0,
+      "population": 0,
+      "rate": null
     },
     "blue": {
-      "incidents": 6196,
-      "population": 61623025,
-      "rate": 10.054683294109628
+      "incidents": 0,
+      "population": 0,
+      "rate": null
     },
     "swing": {
-      "incidents": 6001,
-      "population": 42079572,
-      "rate": 14.261076609809624
+      "incidents": 0,
+      "population": 0,
+      "rate": null
     }
   },
-  "gunLawCorrelation": [
-    {
-      "state": "TX",
-      "lawScore": 20,
-      "violenceRate": 9.985804487193041
-    },
-    {
-      "state": "CA",
-      "lawScore": 85,
-      "violenceRate": 7.185900503559677
-    },
-    {
-      "state": "FL",
-      "lawScore": 32,
-      "violenceRate": 10.994781857070842
-    },
-    {
-      "state": "IL",
-      "lawScore": 65,
-      "violenceRate": 16.219551397476387
-    },
-    {
-      "state": "PA",
-      "lawScore": 38,
-      "violenceRate": 13.621638222856475
-    },
-    {
-      "state": "OH",
-      "lawScore": 28,
-      "violenceRate": 13.634896170732318
-    },
-    {
-      "state": "GA",
-      "lawScore": 22,
-      "violenceRate": 14.065952916536393
-    },
-    {
-      "state": "NC",
-      "lawScore": 35,
-      "violenceRate": 13.188142558560566
-    },
-    {
-      "state": "MI",
-      "lawScore": 40,
-      "violenceRate": 13.4399215084673
-    },
-    {
-      "state": "AZ",
-      "lawScore": 25,
-      "violenceRate": 17.25731761223405
-    }
-  ],
+  "gunLawCorrelation": [],
   "massShootingsByPolitics": {
     "red": {
       "incidents": 0,
-      "population": 64899962,
-      "massShootings": 184
+      "population": 0,
+      "massShootings": 0
     },
     "blue": {
       "incidents": 0,
-      "population": 61623025,
-      "massShootings": 160
+      "population": 0,
+      "massShootings": 0
     },
     "swing": {
       "incidents": 0,
-      "population": 42079572,
-      "massShootings": 155
+      "population": 0,
+      "massShootings": 0
     }
   }
 }
