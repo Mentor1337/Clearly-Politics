@@ -353,23 +353,32 @@
 	</div>
 
 	<script>
-		document.addEventListener('DOMContentLoaded', function () {
-			initializeDashboard();
-		});
+		document.addEventListener('DOMContentLoaded', initializeDashboard);
 
 		async function initializeDashboard() {
 			try {
 				showLoadingState(true);
 
-				// Load historical GVA data
-				const historicalResponse = await fetch('data/processed/historical_gva_data.json');
-				const historicalData = await historicalResponse.json();
+				// Try to load historical data, but don't fail the whole page if it's missing
+				let historicalData = [];
+				try {
+					const histRes = await fetch('data/processed/historical_gva_data.json', { cache: 'no-store' });
+					if (histRes.ok) historicalData = await histRes.json();
+				} catch (_) {
+					console.warn('No historical_gva_data.json found; continuing without it.');
+				}
 
-				// Load current processed data written by the collector
-				const currentResponse = await fetch('data/processed/latest.json', { cache: 'no-store' });
-				const currentData = await currentResponse.json();
+				// Load current processed data produced by the workflow
+				const currentRes = await fetch('data/processed/latest.json', { cache: 'no-store' });
+				if (!currentRes.ok) throw new Error(`latest.json fetch failed: ${currentRes.status}`);
+				const currentData = await currentRes.json();
 
+				// Merge current data at the top level so updateDashboard() sees expected fields
 				const combinedData = { ...currentData, historical: historicalData };
+
+				// Normalize metadata keys used by UI
+				combinedData.metadata = combinedData.metadata || {};
+				combinedData.metadata.lastUpdated = combinedData.metadata.lastUpdated || combinedData.metadata.processedAt;
 
 				updateDashboard(combinedData);
 				showLoadingState(false);
@@ -380,10 +389,7 @@
 		}
 
 		function showLoadingState(isLoading) {
-			const statCards = document.querySelectorAll('.stat-number');
-			if (isLoading) {
-				statCards.forEach(card => card.textContent = 'Loading...');
-			}
+			if (isLoading) document.querySelectorAll('.stat-number').forEach(el => el.textContent = 'Loading...');
 		}
 
 		function showErrorState(message) {
@@ -397,22 +403,20 @@
 		}
 
 		function updateDashboard(data) {
-			const year = data.metadata.year || new Date().getFullYear();
-			const lastUpdate = new Date(data.metadata.lastUpdated || Date.now());
-
+			const year = data.metadata?.year || new Date().getFullYear();
+			const lastUpdate = new Date(data.metadata?.lastUpdated || Date.now());
 			document.querySelectorAll('.dynamic-year').forEach(el => {
 				el.textContent = `${year} (as of ${lastUpdate.toLocaleDateString()})`;
 			});
 
-			// Update stat cards
-			const gvSummary = data.gunViolenceSummary;
+			const gvSummary = data.gunViolenceSummary || {};
 			document.getElementById('total-incidents').textContent = gvSummary.totalIncidents?.toLocaleString() ?? 'N/A';
 			document.getElementById('mass-shootings').textContent = gvSummary.massShootings?.toLocaleString() ?? 'N/A';
 			document.getElementById('deaths-total').textContent = gvSummary.deaths?.toLocaleString() ?? 'N/A';
 
-			const pvBreakdown = data.politicalViolenceBreakdown;
-			const politicalViolenceTotal = pvBreakdown.rightWingExtremism + pvBreakdown.leftWingExtremism + pvBreakdown.islamistExtremism + pvBreakdown.otherIdeology;
-			document.getElementById('political-violence').textContent = politicalViolenceTotal?.toLocaleString() ?? 'N/A';
+			const pv = data.politicalViolenceBreakdown || {};
+			const pvTotal = (pv.rightWingExtremism || 0) + (pv.leftWingExtremism || 0) + (pv.islamistExtremism || 0) + (pv.otherIdeology || 0);
+			document.getElementById('political-violence').textContent = pvTotal?.toLocaleString() ?? 'N/A';
 
 			initializeCharts(data);
 		}
