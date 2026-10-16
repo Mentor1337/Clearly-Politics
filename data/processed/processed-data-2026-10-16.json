@@ -1,0 +1,223 @@
+{
+  "metadata": {
+    "processedAt": "2026-10-16T13:01:23.433Z",
+    "version": "1.1",
+    "year": 2026
+  },
+  "gunViolenceSummary": {
+    "totalIncidents": 39210,
+    "massShootings": 563,
+    "deaths": 12359,
+    "injuries": 26851,
+    "stateBreakdown": [
+      {
+        "state": "TX",
+        "incidents": 3441
+      },
+      {
+        "state": "CA",
+        "incidents": 3163
+      },
+      {
+        "state": "FL",
+        "incidents": 2808
+      },
+      {
+        "state": "IL",
+        "incidents": 2312
+      },
+      {
+        "state": "PA",
+        "incidents": 1996
+      },
+      {
+        "state": "OH",
+        "incidents": 1815
+      },
+      {
+        "state": "GA",
+        "incidents": 1734
+      },
+      {
+        "state": "NC",
+        "incidents": 1614
+      },
+      {
+        "state": "MI",
+        "incidents": 1524
+      },
+      {
+        "state": "AZ",
+        "incidents": 1434
+      }
+    ],
+    "lastUpdated": "2026-10-16T13:01:23.291Z",
+    "source": "Gun Violence Archive (Estimated)",
+    "methodology": "Estimated based on historical trends"
+  },
+  "politicalViolenceBreakdown": {
+    "rightWingExtremism": 315,
+    "leftWingExtremism": 47,
+    "islamistExtremism": 34,
+    "otherIdeology": 23,
+    "breakdown": {
+      "whiteSupremacist": 187,
+      "antiGovernment": 89,
+      "neoNazi": 39,
+      "antifa": 23,
+      "ecoTerrorism": 8,
+      "other": 44
+    },
+    "sources": [
+      "Center for Strategic & International Studies",
+      "Anti-Defamation League",
+      "FBI Domestic Terrorism reports",
+      "Academic research compilation"
+    ],
+    "timeframe": "2026-01-01 to present",
+    "methodology": "Incidents classified by perpetrator ideology based on manifesto, social media, and law enforcement reports",
+    "collectedAt": "2026-10-16T13:01:23.291Z"
+  },
+  "monthlyTrends": {
+    "data": [
+      {
+        "month": "Jan",
+        "year": 2026,
+        "incidents": 3315
+      },
+      {
+        "month": "Feb",
+        "year": 2026,
+        "incidents": 3526
+      },
+      {
+        "month": "Mar",
+        "year": 2026,
+        "incidents": 3926
+      },
+      {
+        "month": "Apr",
+        "year": 2026,
+        "incidents": 4027
+      },
+      {
+        "month": "May",
+        "year": 2026,
+        "incidents": 3743
+      },
+      {
+        "month": "Jun",
+        "year": 2026,
+        "incidents": 3920
+      },
+      {
+        "month": "Jul",
+        "year": 2026,
+        "incidents": 3293
+      },
+      {
+        "month": "Aug",
+        "year": 2026,
+        "incidents": 3112
+      },
+      {
+        "month": "Sep",
+        "year": 2026,
+        "incidents": 3313
+      },
+      {
+        "month": "Oct",
+        "year": 2026,
+        "incidents": 2996
+      }
+    ],
+    "source": "Mock Data (placeholder for time-series scraping)",
+    "collectedAt": "2026-10-16T13:01:23.292Z"
+  },
+  "gunViolenceByPolitics": {
+    "red": {
+      "incidents": 8064,
+      "population": 64899962,
+      "rate": 12.42527692080929
+    },
+    "blue": {
+      "incidents": 6999,
+      "population": 61623025,
+      "rate": 11.35776765259414
+    },
+    "swing": {
+      "incidents": 6778,
+      "population": 42079572,
+      "rate": 16.10757828050152
+    }
+  },
+  "gunLawCorrelation": [
+    {
+      "state": "TX",
+      "lawScore": 20,
+      "violenceRate": 11.280746303490234
+    },
+    {
+      "state": "CA",
+      "lawScore": 85,
+      "violenceRate": 8.11750117598545
+    },
+    {
+      "state": "FL",
+      "lawScore": 32,
+      "violenceRate": 12.418884736385731
+    },
+    {
+      "state": "IL",
+      "lawScore": 65,
+      "violenceRate": 18.31929791449214
+    },
+    {
+      "state": "PA",
+      "lawScore": 38,
+      "violenceRate": 15.386977868037084
+    },
+    {
+      "state": "OH",
+      "lawScore": 28,
+      "violenceRate": 15.399711605400846
+    },
+    {
+      "state": "GA",
+      "lawScore": 22,
+      "violenceRate": 15.889486877703
+    },
+    {
+      "state": "NC",
+      "lawScore": 35,
+      "violenceRate": 14.895494814217463
+    },
+    {
+      "state": "MI",
+      "lawScore": 40,
+      "violenceRate": 15.18342503995861
+    },
+    {
+      "state": "AZ",
+      "lawScore": 25,
+      "violenceRate": 19.48582161885325
+    }
+  ],
+  "massShootingsByPolitics": {
+    "red": {
+      "incidents": 0,
+      "population": 64899962,
+      "massShootings": 208
+    },
+    "blue": {
+      "incidents": 0,
+      "population": 61623025,
+      "massShootings": 180
+    },
+    "swing": {
+      "incidents": 0,
+      "population": 42079572,
+      "massShootings": 175
+    }
+  }
+}
