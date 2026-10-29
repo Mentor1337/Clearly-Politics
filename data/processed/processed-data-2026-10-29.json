@@ -1,0 +1,132 @@
+{
+  "metadata": {
+    "processedAt": "2026-10-29T14:56:59.878Z",
+    "version": "1.1",
+    "year": 2026
+  },
+  "gunViolenceSummary": {
+    "totalIncidents": 41318,
+    "massShootings": 0,
+    "deaths": 0,
+    "injuries": 0,
+    "stateBreakdown": [],
+    "lastUpdated": "2026-10-29T14:56:59.781Z",
+    "source": "Gun Violence Archive (Live Data)",
+    "methodology": "Real-time data from GVA website scraping",
+    "year": 2026
+  },
+  "politicalViolenceBreakdown": {
+    "rightWingExtremism": 315,
+    "leftWingExtremism": 47,
+    "islamistExtremism": 34,
+    "otherIdeology": 23,
+    "breakdown": {
+      "whiteSupremacist": 187,
+      "antiGovernment": 89,
+      "neoNazi": 39,
+      "antifa": 23,
+      "ecoTerrorism": 8,
+      "other": 44
+    },
+    "sources": [
+      "Center for Strategic & International Studies",
+      "Anti-Defamation League",
+      "FBI Domestic Terrorism reports",
+      "Academic research compilation"
+    ],
+    "timeframe": "2026-01-01 to present",
+    "methodology": "Incidents classified by perpetrator ideology based on manifesto, social media, and law enforcement reports",
+    "collectedAt": "2026-10-29T14:56:59.781Z"
+  },
+  "monthlyTrends": {
+    "data": [
+      {
+        "month": "Jan",
+        "year": 2026,
+        "incidents": 3256
+      },
+      {
+        "month": "Feb",
+        "year": 2026,
+        "incidents": 3906
+      },
+      {
+        "month": "Mar",
+        "year": 2026,
+        "incidents": 4091
+      },
+      {
+        "month": "Apr",
+        "year": 2026,
+        "incidents": 3799
+      },
+      {
+        "month": "May",
+        "year": 2026,
+        "incidents": 3769
+      },
+      {
+        "month": "Jun",
+        "year": 2026,
+        "incidents": 3579
+      },
+      {
+        "month": "Jul",
+        "year": 2026,
+        "incidents": 3330
+      },
+      {
+        "month": "Aug",
+        "year": 2026,
+        "incidents": 3119
+      },
+      {
+        "month": "Sep",
+        "year": 2026,
+        "incidents": 3060
+      },
+      {
+        "month": "Oct",
+        "year": 2026,
+        "incidents": 3044
+      }
+    ],
+    "source": "Mock Data (placeholder for time-series scraping)",
+    "collectedAt": "2026-10-29T14:56:59.782Z"
+  },
+  "gunViolenceByPolitics": {
+    "red": {
+      "incidents": 0,
+      "population": 0,
+      "rate": null
+    },
+    "blue": {
+      "incidents": 0,
+      "population": 0,
+      "rate": null
+    },
+    "swing": {
+      "incidents": 0,
+      "population": 0,
+      "rate": null
+    }
+  },
+  "gunLawCorrelation": [],
+  "massShootingsByPolitics": {
+    "red": {
+      "incidents": 0,
+      "population": 0,
+      "massShootings": 0
+    },
+    "blue": {
+      "incidents": 0,
+      "population": 0,
+      "massShootings": 0
+    },
+    "swing": {
+      "incidents": 0,
+      "population": 0,
+      "massShootings": 0
+    }
+  }
+}
