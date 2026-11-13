@@ -1,16 +1,16 @@
 {
   "metadata": {
-    "processedAt": "2026-11-12T16:34:45.769Z",
+    "processedAt": "2026-11-13T15:55:12.411Z",
     "version": "1.1",
     "year": 2026
   },
   "gunViolenceSummary": {
-    "totalIncidents": 43245,
+    "totalIncidents": 43379,
     "massShootings": 0,
     "deaths": 0,
     "injuries": 0,
     "stateBreakdown": [],
-    "lastUpdated": "2026-11-12T16:34:45.533Z",
+    "lastUpdated": "2026-11-13T15:55:12.294Z",
     "source": "Gun Violence Archive (Live Data)",
     "methodology": "Real-time data from GVA website scraping",
     "year": 2026
@@ -36,68 +36,68 @@
     ],
     "timeframe": "2026-01-01 to present",
     "methodology": "Incidents classified by perpetrator ideology based on manifesto, social media, and law enforcement reports",
-    "collectedAt": "2026-11-12T16:34:45.533Z"
+    "collectedAt": "2026-11-13T15:55:12.295Z"
   },
   "monthlyTrends": {
     "data": [
       {
         "month": "Jan",
         "year": 2026,
-        "incidents": 3266
+        "incidents": 3430
       },
       {
         "month": "Feb",
         "year": 2026,
-        "incidents": 3538
+        "incidents": 3904
       },
       {
         "month": "Mar",
         "year": 2026,
-        "incidents": 4001
+        "incidents": 4167
       },
       {
         "month": "Apr",
         "year": 2026,
-        "incidents": 4095
+        "incidents": 3907
       },
       {
         "month": "May",
         "year": 2026,
-        "incidents": 3806
+        "incidents": 4040
       },
       {
         "month": "Jun",
         "year": 2026,
-        "incidents": 3922
+        "incidents": 3722
       },
       {
         "month": "Jul",
         "year": 2026,
-        "incidents": 3543
+        "incidents": 3443
       },
       {
         "month": "Aug",
         "year": 2026,
-        "incidents": 3229
+        "incidents": 3312
       },
       {
         "month": "Sep",
         "year": 2026,
-        "incidents": 3041
+        "incidents": 3186
       },
       {
         "month": "Oct",
         "year": 2026,
-        "incidents": 3090
+        "incidents": 3095
       },
       {
         "month": "Nov",
         "year": 2026,
-        "incidents": 2838
+        "incidents": 3193
       }
     ],
     "source": "Mock Data (placeholder for time-series scraping)",
-    "collectedAt": "2026-11-12T16:34:45.533Z"
+    "collectedAt": "2026-11-13T15:55:12.295Z"
   },
   "gunViolenceByPolitics": {
     "red": {
